@@ -22,22 +22,47 @@ Or install it yourself as:
 
 You must define `config/database.yml` file first.
 
+The first level is to specify the Ruby implementation (`RbConfig::CONFIG['RUBY_INSTALL_NAME']`), such as :jruby, :ruby, etc.
+The second level is to specify the stage `%w[development test production]`
+
 For example:
 ```ruby
-default: &default
-  adapter: jdbc
-  
-development:
-  <<: *default
-  database: sqlite:db/development.sqlite3
+jruby:
+  default: &default
+    adapter: jdbc
+      
+  development:
+    <<: *default
+    database: sqlite:db/development.sqlite3
+   
+  test:
+    <<: *default
+    database: sqlite:db/test.sqlite3
+    
+  production:
+    <<: *default
+    database: jtds:sqlserver://<%= ENV['DB_SERVER'] %>/<%= ENV['DATABASE'] %>;user=<%= ENV['USER'] %>;password=<%= ENV['PASSWORD'] %>
 
-test:
-  <<: *default
-  database: sqlite:db/test.sqlite3
+ruby:
+  default: &default_ruby
+    adapter: tinytds
 
-production:
-  <<: *default
-  database: jtds:sqlserver://<%= ENV['DB_SERVER'] %>/<%= ENV['DATABASE'] %>;user=<%= ENV['USER'] %>;password=<%= ENV['PASSWORD'] %>
+  development:
+    <<: *default_ruby
+    adapter: sqlite
+    database: db/development.sqlite3   # if memory, set it to empty
+
+  test:
+    <<: *default_ruby
+    adapter: sqlite
+    database: db/test.sqlite3
+
+  production:
+    <<: *default_ruby
+    user: <%= ENV['USER'] %>
+    password: <%= ENV['PASSWORD'] %>
+    database: <%= ENV['DATABASE'] %>
+    dataserver: <%= ENV['DB_SERVER'] %>    
 ```
 
 Reference: http://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html
