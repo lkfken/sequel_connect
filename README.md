@@ -22,8 +22,41 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+You must define `config/database.yml` file first.
 
+For example:
+```ruby
+default: &default
+  adapter: jdbc
+  
+development:
+  <<: *default
+  database: sqlite:db/development.sqlite3
+
+test:
+  <<: *default
+  database: sqlite:db/test.sqlite3
+
+production:
+  <<: *default
+  database: jtds:sqlserver://<%= ENV['DB_SERVER'] %>/<%= ENV['DATABASE'] %>;user=<%= ENV['USER'] %>;password=<%= ENV['PASSWORD'] %>
+```
+
+Reference: http://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html
+
+Now, the constant `SequelConect::DB` can be used to connect to your database.
+
+```ruby
+require 'bundler/setup'
+require 'sequel_connect'
+require 'pp'
+
+class Member  < Sequel::Model(SequelConnect::DB)
+end
+
+pp SequelConnect::DB
+# <Sequel::JDBC::Database: "jdbc:jtds:sqlserver://somerserver/somedatabase" {"adapter"=>"jdbc", "database"=>"jtds:sqlserver://someserver/somedatabase"}>
+```
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -32,5 +65,5 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/sequel_connect.
+Bug reports and pull requests are welcome on GitHub at https://github.com/lkfken/sequel_connect.
 
