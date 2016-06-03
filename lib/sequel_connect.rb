@@ -35,9 +35,7 @@ module SequelConnect
 
   module_function :db_config, :stage, :ruby_implementation, :current_config, :adapter
 
-  def DB
-    @DB ||= Sequel.connect(SequelConnect.current_config)
-  end
+  DB = Sequel.connect(SequelConnect.current_config)
 
   begin
     raise unless DB.test_connection
