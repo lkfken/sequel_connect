@@ -9,18 +9,6 @@ require 'erb'
 require 'sequel'
 
 module SequelConnect
-  def DB
-    @DB ||= Sequel.connect(SequelConnect.current_config)
-  end
-
-  begin
-    raise unless DB.test_connection
-  rescue => ex
-    puts ex.message
-  end
-
-  module_function
-
   def db_config
     filename    = File.join('.', 'config', 'database.yml')
     config_file = Pathname(filename)
@@ -45,4 +33,15 @@ module SequelConnect
     current_config['adapter']
   end
 
+  module_function :db_config, :stage, :ruby_implementation, :current_config, :adapter
+
+  def DB
+    @DB ||= Sequel.connect(SequelConnect.current_config)
+  end
+
+  begin
+    raise unless DB.test_connection
+  rescue => ex
+    puts ex.message
+  end
 end
