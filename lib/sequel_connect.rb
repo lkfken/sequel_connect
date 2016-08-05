@@ -9,9 +9,6 @@ require 'erb'
 require 'sequel'
 
 module SequelConnect
-  class MissingStageError < StandardError
-
-  end
 
   module_function
 
@@ -49,8 +46,6 @@ module SequelConnect
   def adapter
     current_config['adapter']
   end
-
-  # module_function :db_config, :stage, :ruby_implementation, :current_config, :adapter, :filename_set, :filename
 
   def DB
     @db ||= begin
