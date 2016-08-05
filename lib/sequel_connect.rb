@@ -9,16 +9,33 @@ require 'erb'
 require 'sequel'
 
 module SequelConnect
+  class MissingStageError < StandardError
+
+  end
+
+  module_function
+
+  def filename=(fn)
+    @filename = fn
+  end
+
+  def filename
+    @filename ||= File.join('.', 'config', 'database.yml')
+  end
+
   def db_config
-    filename    = File.join('.', 'config', 'database.yml')
-    config_file = Pathname(filename)
-    raise SequelConnect::MissingConfigFileError, "#{config_file.expand_path} not found!" unless File.exist?(config_file)
-    erb = ERB.new(File.read(config_file))
-    YAML.load(erb.result)
+    @db_config ||= begin
+      config_file = Pathname(filename)
+      raise SequelConnect::MissingConfigFileError, "#{config_file.expand_path} not found!" unless File.exist?(config_file)
+      erb = ERB.new(File.read(config_file))
+      YAML.load(erb.result)
+    end
   end
 
   def stage
-    ENV['STAGE'].downcase
+    s = ENV['STAGE']
+    raise SequelConnect::MissingStageError, "Missing environment variable `STAGE'" if s.nil?
+    s.downcase
   end
 
   def ruby_implementation
@@ -33,13 +50,18 @@ module SequelConnect
     current_config['adapter']
   end
 
-  module_function :db_config, :stage, :ruby_implementation, :current_config, :adapter
+  # module_function :db_config, :stage, :ruby_implementation, :current_config, :adapter, :filename_set, :filename
 
-  DB = Sequel.connect(SequelConnect.current_config)
-
-  begin
-    raise unless DB.test_connection
-  rescue => ex
-    puts ex.message
+  def DB
+    @db ||= begin
+      warn 'DB connect'
+      @db = Sequel.connect(SequelConnect.current_config)
+      begin
+        raise unless @db.test_connection
+      rescue => ex
+        raise ex.message
+      end
+      @db
+    end
   end
 end
