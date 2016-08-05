@@ -49,7 +49,6 @@ module SequelConnect
 
   def DB
     @db ||= begin
-      warn 'DB connect'
       @db = Sequel.connect(SequelConnect.current_config)
       begin
         raise unless @db.test_connection
