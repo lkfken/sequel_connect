@@ -30,8 +30,8 @@ module SequelConnect
   end
 
   def stage
-    s = ENV['STAGE']
-    raise SequelConnect::MissingStageError, "Missing environment variable `STAGE'" if s.nil?
+    s = ENV['DB_STAGE']
+    raise SequelConnect::MissingStageError, "Missing environment variable `DB_STAGE'" if s.nil?
     s.downcase
   end
 
