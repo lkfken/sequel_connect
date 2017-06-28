@@ -1,5 +1,6 @@
 require_relative 'sequel_connect/version'
 require_relative 'sequel_connect/exceptions'
+require_relative 'sequel_connect/default'
 
 require 'pathname'
 require 'yaml'
@@ -9,9 +10,6 @@ require 'erb'
 require 'sequel'
 
 module SequelConnect
-
-  module_function
-
   def filename=(fn)
     @filename = fn
   end
@@ -49,7 +47,7 @@ module SequelConnect
 
   def DB
     @db ||= begin
-      @db = Sequel.connect(SequelConnect.current_config)
+      @db = Sequel.connect(current_config)
       begin
         raise unless @db.test_connection
       rescue => ex

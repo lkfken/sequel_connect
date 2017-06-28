@@ -74,10 +74,10 @@ require 'bundler/setup'
 require 'sequel_connect'
 require 'pp'
 
-class Member  < Sequel::Model(SequelConnect::DB)
+class Member  < Sequel::Model(SequelConnect::Default.DB)
 end
 
-pp SequelConnect::DB
+pp SequelConnect::Default.DB
 # <Sequel::JDBC::Database: "jdbc:jtds:sqlserver://somerserver/somedatabase" {"adapter"=>"jdbc", "database"=>"jtds:sqlserver://someserver/somedatabase"}>
 ```
 ## Development
