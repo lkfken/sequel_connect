@@ -10,12 +10,18 @@ require 'erb'
 require 'sequel'
 
 module SequelConnect
+  extend self
+
   def filename=(fn)
     @filename = fn
   end
 
   def filename
     @filename ||= File.join('.', 'config', 'database.yml')
+  end
+
+  def db_config=(config)
+    @db_config = config
   end
 
   def db_config
@@ -27,10 +33,16 @@ module SequelConnect
     end
   end
 
+  def stage=(level)
+    @stage = level.to_s.downcase
+  end
+
   def stage
-    s = ENV['DB_STAGE']
-    raise SequelConnect::MissingStageError, "Missing environment variable `DB_STAGE'" if s.nil?
-    s.downcase
+    @stage ||= begin
+      s = ENV['DB_STAGE']
+      raise SequelConnect::MissingStageError, "Missing environment variable `DB_STAGE'" if s.nil?
+      s.downcase
+    end
   end
 
   def ruby_implementation
@@ -38,7 +50,8 @@ module SequelConnect
   end
 
   def current_config
-    db_config[ruby_implementation][stage]
+    implementation = db_config.fetch(ruby_implementation) { |key| raise "missing #{key} platform in your configuration" }
+    implementation.fetch(stage) { |key| raise "missing #{key} stage" }
   end
 
   def adapter
