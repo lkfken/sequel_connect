@@ -68,7 +68,7 @@ module SequelConnect
       begin
         raise unless @db.test_connection
       rescue => ex
-        raise ex.message
+        raise [current_config, ex.message].join("\n")
       end
       @db
     end
