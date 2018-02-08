@@ -48,7 +48,7 @@ module SequelConnect
   end
 
   def ruby_implementation
-    RbConfig::CONFIG['RUBY_INSTALL_NAME'] # 'ruby', 'jruby', etc
+    RbConfig::CONFIG['RUBY_INSTALL_NAME'] # 'ruby', 'jruby', 'ruby2.3', etc
   end
 
   def current_config
