@@ -1,3 +1,5 @@
+# coding: utf-8
+
 require_relative 'sequel_connect/version'
 require_relative 'sequel_connect/exceptions'
 require_relative 'sequel_connect/default'
@@ -26,7 +28,7 @@ module SequelConnect
 
   def db_config
     @db_config ||= begin
-      config_file = Pathname(filename)
+      config_file = Pathname(self.filename)
       raise SequelConnect::MissingConfigFileError, "#{config_file.expand_path} not found!" unless File.exist?(config_file)
       erb = ERB.new(File.read(config_file))
       YAML.load(erb.result)
@@ -50,8 +52,10 @@ module SequelConnect
   end
 
   def current_config
-    implementation = db_config.fetch(ruby_implementation) { |key| raise "missing #{key} platform in your configuration" }
-    implementation.fetch(stage) { |key| raise "missing #{key} stage" }
+    @current_config ||= begin
+      implementation = db_config.fetch(ruby_implementation) { |key| raise "missing #{key} platform in your configuration" }
+      implementation.fetch(stage) { |key| raise "missing #{key} stage" }
+    end
   end
 
   def adapter
