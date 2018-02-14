@@ -53,7 +53,7 @@ module SequelConnect
 
   def current_config
     @current_config ||= begin
-      implementation = db_config.fetch(ruby_implementation) { |key| raise "missing #{key} platform in your configuration" }
+      implementation = db_config.fetch(ruby_implementation) { |key| raise "missing #{key} platform in your configuration #{self.filename}" }
       implementation.fetch(stage) { |key| raise "missing #{key} stage" }
     end
   end
