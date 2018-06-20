@@ -10,7 +10,7 @@ require 'rbconfig'
 require 'erb'
 
 require 'sequel'
-
+STAGE = 'DB_STAGE'
 module SequelConnect
   extend self
 
@@ -41,8 +41,8 @@ module SequelConnect
 
   def stage
     @stage ||= begin
-      s = ENV['DB_STAGE']
-      raise SequelConnect::MissingStageError, "Missing environment variable `DB_STAGE'" if s.nil?
+      s = ENV[STAGE]
+      raise SequelConnect::MissingStageError, "Missing environment variable `#{STAGE}'" if s.nil?
       s.downcase
     end
   end
@@ -62,7 +62,7 @@ module SequelConnect
     current_config['adapter']
   end
 
-  def DB
+  def db
     @db ||= begin
       @db = Sequel.connect(current_config)
       begin
@@ -73,4 +73,5 @@ module SequelConnect
       @db
     end
   end
+  alias_method :DB, :db
 end
