@@ -43,7 +43,7 @@ jruby:
     <<: *default
     database: jtds:sqlserver://<%= ENV['DB_SERVER'] %>/<%= ENV['DATABASE'] %>;user=<%= ENV['USER'] %>;password=<%= ENV['PASSWORD'] %>
 
-ruby:
+ruby: &ruby
   default: &default_ruby
     adapter: tinytds
 
@@ -63,6 +63,9 @@ ruby:
     password: <%= ENV['PASSWORD'] %>
     database: <%= ENV['DATABASE'] %>
     dataserver: <%= ENV['DB_SERVER'] %>    
+
+ruby2.5:
+  <<: *ruby
 ```
 
 Reference: http://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html
