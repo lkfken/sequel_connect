@@ -31,7 +31,7 @@ module SequelConnect
       config_file = Pathname(self.filename)
       raise SequelConnect::MissingConfigFileError, "#{config_file.expand_path} not found!" unless File.exist?(config_file)
       erb = ERB.new(File.read(config_file))
-      YAML.load(erb.result)
+      YAML.load(erb.result, aliases: true)
     end
   end
 
